@@ -10,7 +10,6 @@
 
 1. **Le son se décale en PAL.** L'écart grandit d'environ 1 ms par seconde, soit environ 1,8 s au bout de 30 min.
 2. **La vidéo saccade dans le noir.** La caméra allonge le temps de pose (« slow shutter ») et répète des images.
-3. **Le NTSC n'est pas une solution :** il règle le son, mais l'image scintille sous les éclairages à 50 Hz.
 
 ### Les causes
 
@@ -64,8 +63,6 @@ Ensuite :
 ### Ce qui ne marche pas
 
 - Le réglage « Fréquence 50/60 Hz » n'enlève pas le scintillement du NTSC.
-- Modifier l'appli RunCam ne sert à rien : son QR code ne contient que les réglages du menu.
-- `t app test vf off/on` et `t app test chg_res 4` font planter la caméra. Débranche l'alimentation et retire la carte pour en sortir.
 
 ---
 
@@ -75,7 +72,6 @@ Ensuite :
 
 1. **Audio drifts out of sync in PAL.** The gap grows by about 1 ms per second, roughly 1.8 s after 30 min.
 2. **Video stutters in the dark.** The camera lengthens the exposure ("slow shutter") and repeats frames.
-3. **NTSC is not a solution:** it fixes the audio, but the image flickers under 50 Hz lighting.
 
 ### The causes
 
@@ -129,8 +125,6 @@ Then:
 ### What does not work
 
 - The "Frequency 50/60 Hz" setting does not remove NTSC flicker.
-- Modifying the RunCam app is pointless: its QR code only carries the menu settings.
-- `t app test vf off/on` and `t app test chg_res 4` crash the camera. Unplug the power and remove the card to recover.
 
 ---
 
