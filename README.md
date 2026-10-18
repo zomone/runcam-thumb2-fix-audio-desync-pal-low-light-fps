@@ -51,6 +51,15 @@ Ensuite :
 - Dans le noir, l'image est un peu plus sombre ou bruitée, mais elle reste fluide.
 - Les fichiers sont datés de 2023 parce que la caméra n'a pas de pile d'horloge : elle perd l'heure à chaque coupure de courant.
 
+### ⚠️ Firmware modifié (jamais testé)
+
+Le dossier `firmware-UNTESTED-NON-TESTE/` contient `Thumb2_V1.2.2_patched_UNTESTED.bin`, le firmware officiel V1.2.2 dans lequel les deux corrections de `autoexec.ash` sont écrites directement. S'il fonctionne, il supprime l'attente de 10 s et permet de formater la carte sans perdre la correction.
+
+- **Il n'a jamais été flashé ni testé sur aucune caméra.** Seules les corrections en mémoire vive (`autoexec.ash`) ont été testées.
+- Un contrôle du fichier (le mot à l'adresse `0x20`) n'a pas pu être identifié. La caméra peut donc refuser le fichier ou ne plus démarrer.
+- **Le flasher est entièrement à tes risques.** Si ta caméra ne fonctionne plus, c'est ta responsabilité, pas celle de l'auteur. Aucune aide ni garantie.
+- Dans le doute, utilise `autoexec.ash`, qui donne le même résultat sans risque. Lis le README du dossier avant de faire quoi que ce soit.
+
 ### Les autres fichiers
 
 | Fichier | Rôle |
@@ -113,6 +122,15 @@ Then:
 - To go back to stock, remove `autoexec.ash` from the card.
 - In the dark the image is slightly darker or noisier, but it stays smooth.
 - Files are dated 2023 because the camera has no clock battery: it loses the time at every power cut.
+
+### ⚠️ Modified firmware (never tested)
+
+The `firmware-UNTESTED-NON-TESTE/` folder contains `Thumb2_V1.2.2_patched_UNTESTED.bin`, the official V1.2.2 firmware with both `autoexec.ash` fixes written directly into it. If it works, it removes the 10 s wait and lets you format the card without losing the fix.
+
+- **It has never been flashed or tested on any camera.** Only the RAM fixes (`autoexec.ash`) were tested.
+- One check in the file (the word at offset `0x20`) could not be identified, so the camera may reject the file or stop booting.
+- **Flashing it is entirely at your own risk.** If your camera stops working, it is your responsibility, not the author's. No support, no warranty.
+- When in doubt, use `autoexec.ash`, which gives the same result with no risk. Read the folder's README before doing anything.
 
 ### Other files
 
