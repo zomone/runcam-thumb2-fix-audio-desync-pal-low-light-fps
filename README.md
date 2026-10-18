@@ -74,6 +74,16 @@ Le dossier `firmware-UNTESTED-NON-TESTE/` contient `Thumb2_V1.2.2_patched_UNTEST
 
 - Le réglage « Fréquence 50/60 Hz » n'enlève pas le scintillement du NTSC.
 
+### 💬 Un retour serait cool !
+
+Tu as testé ? Que ça marche ou pas, ton retour aide les autres. Sur GitHub, ça passe par une **Issue** :
+
+1. En haut de la page du dépôt, clique sur l'onglet **Issues**, puis sur **New issue**.
+2. Choisis **Retour de test / Test report** et remplis le petit formulaire : version du firmware, fichier testé, résolution, résultat.
+3. Clique sur **Submit new issue**.
+
+Il faut un compte GitHub, qui est gratuit.
+
 ---
 
 ## 🇬🇧 English
@@ -145,6 +155,16 @@ The `firmware-UNTESTED-NON-TESTE/` folder contains `Thumb2_V1.2.2_patched_UNTEST
 ### What does not work
 
 - The "Frequency 50/60 Hz" setting does not remove NTSC flicker.
+
+### 💬 Feedback would be great!
+
+Did you test it? Whether it works or not, your feedback helps others. On GitHub, this is done with an **Issue**:
+
+1. At the top of the repository page, click the **Issues** tab, then **New issue**.
+2. Pick **Retour de test / Test report** and fill in the short form: firmware version, file tested, resolution, result.
+3. Click **Submit new issue**.
+
+You need a GitHub account, which is free.
 
 ---
 
