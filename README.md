@@ -56,7 +56,7 @@ Ensuite :
 | Fichier | Rôle |
 |---|---|
 | `autoexec.ash` | **La solution complète** : son + noir. |
-| `variante-noir-seulement/autoexec.ash` | Seulement la correction du noir, valable dans toutes les résolutions, en PAL comme en NTSC. Pas de délai de 10 s. À copier aussi à la racine de la carte, à la place de l'autre. |
+| `low-light-only/autoexec.ash` | Seulement la correction du noir, valable dans toutes les résolutions, en PAL comme en NTSC. Pas de délai de 10 s. À copier aussi à la racine de la carte, à la place de l'autre. |
 | `pc/corriger_session.bat` | Pour les **vidéos déjà filmées** : glisse le dossier `DCIM\100MEDIA` dessus. Il recolle les rushs coupés à 4 Go et remet l'image à 50 i/s, sans réencodage. Nécessite ffmpeg. |
 | `pc/corriger_son.bat` | Décale le son d'une valeur fixe en ms, sans réencodage. |
 
@@ -118,7 +118,7 @@ Then:
 | File | Purpose |
 |---|---|
 | `autoexec.ash` | **The complete fix**: audio + dark. |
-| `variante-noir-seulement/autoexec.ash` | Dark fix only, in every resolution, PAL or NTSC. No 10 s delay. Also goes to the root of the card, replacing the other one. |
+| `low-light-only/autoexec.ash` | Dark fix only, in every resolution, PAL or NTSC. No 10 s delay. Also goes to the root of the card, replacing the other one. |
 | `pc/corriger_session.bat` | For **clips already recorded**: drag the `DCIM\100MEDIA` folder onto it. It joins the clips split at 4 GB and restores 50 fps, without re-encoding. Needs ffmpeg. |
 | `pc/corriger_son.bat` | Shifts the audio by a fixed number of ms, without re-encoding. |
 
