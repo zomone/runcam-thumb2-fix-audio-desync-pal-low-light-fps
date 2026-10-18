@@ -1,76 +1,137 @@
 # RunCam Thumb 2 : correction du son décalé en PAL et de la chute de fps dans le noir (audio desync + low-light FPS fix)
 
-> **EN:** RunCam Thumb 2 (firmware V1.2.2): in **PAL** the audio slowly drifts out of sync with the video (about 1 ms per second, 1.8 s per 30 min), and the frame rate drops in the dark. Cause: the firmware labels PAL video as 50000/**1001** (49.95 fps) while the IMX586 sensor really runs at **50.000 fps**. This repo gives an `autoexec.ash` for the SD card that patches the table in RAM at every boot (no firmware flashing). It works in every PAL resolution, survives menu changes, and keeps the 50 Hz anti-flicker benefit of PAL. It also includes a lossless PC tool for already-recorded clips.
-
-Mots-clés : RunCam Thumb 2, désynchronisation audio, son décalé, son en retard, audio drift, audio out of sync, PAL 50 fps, 49.95 fps, 1001, scintillement NTSC, chute de fps dans le noir, slow shutter, autoexec.ash, Ambarella S5L.
+🇫🇷 [Français](#-français) · 🇬🇧 [English](#-english)
 
 ---
 
-## Les symptômes
+## 🇫🇷 Français
 
-1. **Le son se décale petit à petit** de l'image, en PAL. Au début du rush tout est calé, puis l'écart grandit d'environ **1 ms par seconde** : 0,27 s au bout de 4 min 30, 1,8 s au bout de 30 min. Quand les rushs coupés à 4 Go sont recollés, l'écart continue de s'accumuler.
-2. **Les images par seconde chutent dans le noir.** La caméra allonge le temps de pose (slow shutter), et la vidéo devient saccadée. Voir la section « Le problème dans les zones sombres ».
-3. **Passer en NTSC règle le son, mais l'image scintille** sous les lumières à 50 Hz (en France ou en Europe, par exemple). Il faut donc rester en PAL.
+### Les problèmes
 
-## La cause (trouvée dans le firmware V1.2.2)
+1. **Le son se décale en PAL.** L'écart grandit d'environ 1 ms par seconde, soit environ 1,8 s au bout de 30 min.
+2. **La vidéo saccade dans le noir.** La caméra allonge le temps de pose (« slow shutter ») et répète des images.
+3. **Le NTSC n'est pas une solution :** il règle le son, mais l'image scintille sous les éclairages à 50 Hz.
 
-- En PAL, le capteur IMX586 filme à **50,000 images/s exactement** : 1728 MHz ÷ (10000 × 3456).
-- Le firmware a une table des modes vidéo PAL. Dans **22 de ses lignes**, la cadence est notée **50000/1001**, soit 49,95 images/s, au lieu de 50000/1000. C'est le cas notamment du 2.7K (2688×1512) 50 i/s.
-- Le fichier MP4 annonce donc 49,95 i/s, alors que les images arrivent à 50 i/s. L'image dure 0,1 % de trop par rapport au son, d'où l'écart d'environ 1 ms par seconde.
-- En NTSC, le capteur tourne bien à 59,94 i/s, ce qui correspond à l'étiquette 60000/1001. C'est pour ça que le NTSC n'a pas de décalage.
+### Les causes
 
-## Le problème dans les zones sombres
+- **Son :** en PAL, le capteur filme à **50,000 i/s**, mais le firmware V1.2.2 indique dans le fichier **50000/1001**, soit 49,95 i/s. Cette erreur se trouve dans 22 modes de sa table PAL, dont le 2.7K50. L'image dure donc 0,1 % de trop par rapport au son.
+- **Noir :** l'exposition automatique active le slow shutter. Le temps de pose dépasse alors la durée d'une image, et le capteur ne peut plus fournir 50 images différentes par seconde.
 
-- **Symptôme :** dès que la scène devient sombre (intérieur, soirée, ombre), la vidéo devient saccadée. Le fichier reste à 50 i/s, mais beaucoup d'images sont des doublons.
-- **Cause :** l'exposition automatique active le **slow shutter**. Pour capter plus de lumière, elle allonge le temps de pose au-delà de la durée d'une image (par exemple 1/25 s au lieu de 1/50 s). Le capteur ne peut plus fournir 50 images différentes par seconde, et la caméra répète des images.
-- **Correction :** la commande `t imgproc -slowshutter 0 0` désactive ce mode. Le script la renvoie **toutes les 2 secondes**, parce que la caméra le réactive d'elle-même, par exemple après un changement de mode ou de résolution.
-- **Contrepartie :** dans le noir, l'image est un peu plus sombre et un peu plus bruitée, car la caméra compense avec le gain ISO au lieu du temps de pose. En échange, elle reste fluide.
-- Cette correction ne dépend pas de la résolution et n'en force aucune. Elle marche dans toutes les résolutions, en PAL comme en NTSC, même si tu changes de réglage sans redémarrer. Elle est incluse dans `camera/autoexec.ash`. Elle existe aussi seule dans `camera/variantes/autoexec_noir_seul.ash`, pour ceux qui ne veulent que ça, par exemple en NTSC.
+### La solution : `autoexec.ash`
 
-## La solution : `camera/autoexec.ash`
+La caméra exécute ce fichier à chaque démarrage. **Le firmware n'est pas modifié** : tout se fait en mémoire vive et s'efface à l'extinction.
 
-À chaque démarrage, la caméra exécute le fichier `autoexec.ash` placé à la racine de la carte SD. **Le firmware n'est jamais modifié** : tout se passe en mémoire vive et s'efface à l'extinction. Sans la carte, la caméra redevient d'origine.
+1. Il corrige la table PAL en mémoire (1001 → 1000).
+2. Il relance l'image vers 7 s, **sans changer la résolution**, pour qu'elle reparte avec la table corrigée.
+3. Il désactive le slow shutter toutes les 2 s.
 
-Le script fait trois choses :
-
-1. **Il corrige la table PAL en mémoire** (22 commandes `writel ... 0x3e8`) : chaque 1001 faux devient 1000.
-2. **Il relance l'image** vers 7 s (`t app test chg_enctype H264`). Au démarrage, la caméra a configuré l'image avant la correction. Cette relance la reconfigure avec la table corrigée, **en gardant la résolution de la dernière fois**. Elle passe par le même chemin que le menu.
-3. **Il désactive le slow shutter** en boucle (`t imgproc -slowshutter 0 0`), pour que les images par seconde ne chutent plus dans le noir.
-
-Résultat vérifié : le fichier sort en **50/1**, la durée de l'image et celle du son coïncident à quelques millisecondes près sur 4 minutes, les claps restent synchro du début à la fin, et ça marche aussi après un changement de résolution dans le menu, sans redémarrer.
+Résultat : des fichiers en **50/1** où le son reste calé du début à la fin, dans toutes les résolutions PAL, même si tu changes de réglage sans redémarrer.
 
 ### Installation
 
-1. Copie `camera/autoexec.ash` à la **racine** de la carte SD, à côté du dossier `DCIM`.
-2. Mets la caméra en **PAL**.
-3. Allume la caméra et **attends environ 10 secondes avant d'enregistrer**. L'image « clignote » une fois vers 7 s : c'est la relance.
+Copie `autoexec.ash` **directement à la racine de la carte SD**, au même niveau que le dossier `DCIM`, et pas dans un sous-dossier :
+
+```
+Carte SD
+├── DCIM
+├── autoexec.ash      ← ici
+└── RunCamThumb2.ini
+```
+
+Ensuite :
+
+1. Mets la caméra en **PAL**.
+2. Allume-la, puis **attends environ 10 s avant d'enregistrer**. L'image clignote une fois : c'est la relance.
 
 ### À savoir
 
-- ⚠️ **N'enregistre pas pendant les 10 premières secondes.** Une vidéo lancée avant la relance serait illisible. Pour la même raison, laisse « Enregistrement auto au démarrage » désactivé.
-- Le script remet le codec en **H.264** à chaque démarrage.
-- Les adresses mémoire valent **uniquement pour le firmware V1.2.2** (`Thumb2.bin`). Sur une autre version, n'utilise pas ce script tel quel.
-- Pour revenir à la normale, il suffit de retirer `autoexec.ash` de la carte.
-- La caméra date ses fichiers du 31/12/2023, et c'est normal : elle n'a pas de pile d'horloge. Scanner un QR code de l'appli RunCam remet l'heure, jusqu'à la prochaine coupure de courant.
+- ⚠️ Une vidéo lancée pendant les 10 premières secondes sera illisible. Laisse donc « Enregistrement auto au démarrage » désactivé.
+- Le codec est remis en H.264 à chaque démarrage.
+- Les adresses mémoire du script valent **uniquement pour le firmware V1.2.2**.
+- Pour revenir à la normale, retire `autoexec.ash` de la carte.
+- Dans le noir, l'image est un peu plus sombre ou bruitée, mais elle reste fluide.
+- Les fichiers sont datés de 2023 parce que la caméra n'a pas de pile d'horloge : elle perd l'heure à chaque coupure de courant.
 
-## Les autres fichiers
+### Les autres fichiers
 
-| Fichier | À quoi il sert |
+| Fichier | Rôle |
 |---|---|
-| `camera/autoexec.ash` | **La solution complète** : correction PAL dans toutes les résolutions, résolution de la dernière fois conservée, pas de chute de fps dans le noir. |
-| `camera/variantes/autoexec_force_2k7.ash` | Même correction, mais la caméra démarre toujours en 2.7K50 (`t app test chg_res 70`, où 70 est le numéro de ligne dans la table PAL). Version de secours. |
-| `camera/variantes/autoexec_capteur_2k7.ash` | Autre méthode : elle ralentit le capteur à 49,95 i/s pile pour coller à l'étiquette (`t sensor write 0 1 0x343 0x1a`, longueur de ligne 10000 → 10010). **Valable seulement en 2.7K50 PAL.** |
-| `camera/variantes/autoexec_noir_seul.ash` | Seulement l'anti-chute de fps dans le noir, sans correction du son. Marche dans toutes les résolutions, en PAL comme en NTSC, sans en forcer aucune. Les 10 premières secondes sont sans risque avec ce script. |
-| `pc/corriger_session.bat` + `.ps1` | Pour les **rushs déjà filmés** : glisse le dossier `DCIM\100MEDIA` sur le `.bat`. Il regroupe les rushs coupés à 4 Go en séances (tu peux choisir lesquels), les recolle et remet l'image à 50 i/s (`ffmpeg -itsscale 0.999000999`), **sans réencodage ni perte de qualité**. Nécessite ffmpeg. |
-| `pc/corriger_son.bat` | Décale le son d'une valeur fixe en millisecondes (trouvée par exemple dans VLC), sans réencodage. |
+| `autoexec.ash` | **La solution complète** : son + noir. |
+| `variante-noir-seulement/autoexec.ash` | Seulement la correction du noir, valable dans toutes les résolutions, en PAL comme en NTSC. Pas de délai de 10 s. À copier aussi à la racine de la carte, à la place de l'autre. |
+| `pc/corriger_session.bat` | Pour les **vidéos déjà filmées** : glisse le dossier `DCIM\100MEDIA` dessus. Il recolle les rushs coupés à 4 Go et remet l'image à 50 i/s, sans réencodage. Nécessite ffmpeg. |
+| `pc/corriger_son.bat` | Décale le son d'une valeur fixe en ms, sans réencodage. |
 
-## Ce qui ne marche pas (pour éviter de perdre du temps)
+### Ce qui ne marche pas
 
-- **Le réglage « Fréquence 50/60 Hz »** ne change rien au scintillement en NTSC.
-- **Modifier l'appli RunCam ne peut rien corriger.** Elle ne fait que générer un QR code avec 22 réglages du menu (2 chiffres chacun), et aucun ne touche à la cadence.
-- `t app test chg_res 4` : l'argument est le **numéro de ligne dans la table**, pas le numéro du menu. La ligne 4 n'a pas de mode capteur, et la caméra redémarre en boucle. Si ça arrive, retire la carte.
-- `t app test vf off` / `vf on` : provoque une erreur capteur (lumière verte qui clignote vite). Débranche puis rebranche l'alimentation pour en sortir.
+- Le réglage « Fréquence 50/60 Hz » n'enlève pas le scintillement du NTSC.
+- Modifier l'appli RunCam ne sert à rien : son QR code ne contient que les réglages du menu.
+- `t app test vf off/on` et `t app test chg_res 4` font planter la caméra. Débranche l'alimentation et retire la carte pour en sortir.
 
-## Avertissement
+---
 
-Ces scripts passent par des commandes de test du firmware Ambarella. Ils ne modifient pas la mémoire flash, mais tu les utilises à tes risques. Testé sur une RunCam Thumb 2 en firmware V1.2.2.
+## 🇬🇧 English
+
+### The problems
+
+1. **Audio drifts out of sync in PAL.** The gap grows by about 1 ms per second, roughly 1.8 s after 30 min.
+2. **Video stutters in the dark.** The camera lengthens the exposure ("slow shutter") and repeats frames.
+3. **NTSC is not a solution:** it fixes the audio, but the image flickers under 50 Hz lighting.
+
+### The causes
+
+- **Audio:** in PAL the sensor records at **50.000 fps**, but firmware V1.2.2 writes **50000/1001** (49.95 fps) into the file. The error is in 22 modes of its PAL table, including 2.7K50. The video therefore runs 0.1 % longer than the audio.
+- **Dark:** auto exposure enables slow shutter. The exposure becomes longer than one frame, so the sensor can no longer deliver 50 distinct frames per second.
+
+### The fix: `autoexec.ash`
+
+The camera runs this file at every boot. **The firmware is not modified**: everything happens in RAM and is cleared at power-off.
+
+1. It patches the PAL table in RAM (1001 → 1000).
+2. It restarts the video pipeline at about 7 s, **keeping the current resolution**, so it picks up the patched table.
+3. It disables slow shutter every 2 s.
+
+Result: **50/1** files with audio in sync from start to end, in every PAL resolution, even after you change settings without rebooting.
+
+### Installation
+
+Copy `autoexec.ash` **straight to the root of the SD card**, next to the `DCIM` folder, not into a subfolder:
+
+```
+SD card
+├── DCIM
+├── autoexec.ash      ← here
+└── RunCamThumb2.ini
+```
+
+Then:
+
+1. Set the camera to **PAL**.
+2. Power it on and **wait about 10 s before recording**. The image blinks once: that is the restart.
+
+### Good to know
+
+- ⚠️ A recording started during the first 10 seconds will be unreadable, so keep "Auto recording on startup" off.
+- The codec is set back to H.264 at every boot.
+- The memory addresses in the script are valid **for firmware V1.2.2 only**.
+- To go back to stock, remove `autoexec.ash` from the card.
+- In the dark the image is slightly darker or noisier, but it stays smooth.
+- Files are dated 2023 because the camera has no clock battery: it loses the time at every power cut.
+
+### Other files
+
+| File | Purpose |
+|---|---|
+| `autoexec.ash` | **The complete fix**: audio + dark. |
+| `variante-noir-seulement/autoexec.ash` | Dark fix only, in every resolution, PAL or NTSC. No 10 s delay. Also goes to the root of the card, replacing the other one. |
+| `pc/corriger_session.bat` | For **clips already recorded**: drag the `DCIM\100MEDIA` folder onto it. It joins the clips split at 4 GB and restores 50 fps, without re-encoding. Needs ffmpeg. |
+| `pc/corriger_son.bat` | Shifts the audio by a fixed number of ms, without re-encoding. |
+
+### What does not work
+
+- The "Frequency 50/60 Hz" setting does not remove NTSC flicker.
+- Modifying the RunCam app is pointless: its QR code only carries the menu settings.
+- `t app test vf off/on` and `t app test chg_res 4` crash the camera. Unplug the power and remove the card to recover.
+
+---
+
+*Testé sur une RunCam Thumb 2, firmware V1.2.2. Scripts fournis sans garantie. / Tested on a RunCam Thumb 2, firmware V1.2.2. Use at your own risk.*
