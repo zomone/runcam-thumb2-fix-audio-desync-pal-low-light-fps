@@ -14,7 +14,7 @@
 ### Les causes
 
 - **Son :** en PAL, le capteur filme à **50,000 i/s**, mais le firmware V1.2.2 indique dans le fichier **50000/1001**, soit 49,95 i/s. Cette erreur se trouve dans 22 modes de sa table PAL, dont le 2.7K50. L'image dure donc 0,1 % de trop par rapport au son.
-- **Noir :** l'exposition automatique active le slow shutter. Le temps de pose dépasse alors la durée d'une image, et le capteur ne peut plus fournir 50 images différentes par seconde.
+- **Noir :** le firmware active le slow shutter dès que la cadence dépasse 30 i/s. Le temps de pose peut alors dépasser la durée d'une image, et le capteur ne fournit plus 50 images différentes par seconde.
 
 ### La solution : `autoexec.ash`
 
@@ -22,7 +22,7 @@ La caméra exécute ce fichier à chaque démarrage. **Le firmware n'est pas mod
 
 1. Il corrige la table PAL en mémoire (1001 → 1000).
 2. Il relance l'image vers 7 s, **sans changer la résolution**, pour qu'elle reparte avec la table corrigée.
-3. Il désactive le slow shutter toutes les 2 s.
+3. Il modifie en mémoire l'instruction qui active le slow shutter, pour que celui-ci reste toujours désactivé.
 
 Résultat : des fichiers en **50/1** où le son reste calé du début à la fin, dans toutes les résolutions PAL, même si tu changes de réglage sans redémarrer.
 
@@ -76,7 +76,7 @@ Ensuite :
 ### The causes
 
 - **Audio:** in PAL the sensor records at **50.000 fps**, but firmware V1.2.2 writes **50000/1001** (49.95 fps) into the file. The error is in 22 modes of its PAL table, including 2.7K50. The video therefore runs 0.1 % longer than the audio.
-- **Dark:** auto exposure enables slow shutter. The exposure becomes longer than one frame, so the sensor can no longer deliver 50 distinct frames per second.
+- **Dark:** the firmware enables slow shutter whenever the frame rate is above 30 fps. The exposure can then exceed one frame, and the sensor no longer delivers 50 distinct frames per second.
 
 ### The fix: `autoexec.ash`
 
@@ -84,7 +84,7 @@ The camera runs this file at every boot. **The firmware is not modified**: every
 
 1. It patches the PAL table in RAM (1001 → 1000).
 2. It restarts the video pipeline at about 7 s, **keeping the current resolution**, so it picks up the patched table.
-3. It disables slow shutter every 2 s.
+3. It patches in RAM the instruction that enables slow shutter, so it always stays off.
 
 Result: **50/1** files with audio in sync from start to end, in every PAL resolution, even after you change settings without rebooting.
 

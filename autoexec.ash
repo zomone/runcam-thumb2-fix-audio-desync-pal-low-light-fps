@@ -20,8 +20,6 @@ writel 0xae9e4c 0x3e8
 writel 0xae9e64 0x3e8
 writel 0xae9e7c 0x3e8
 writel 0xae9e94 0x3e8
+writel 0x112100 0xc3a03000
 sleep 4500
 t app test chg_enctype H264
-sleep 3000
-t imgproc -slowshutter 0 0
-loop 100000; do t imgproc -slowshutter 0 0; sleep 2000; done
