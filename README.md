@@ -1,4 +1,4 @@
-# RunCam Thumb 2 : correction du décalage son / image en PAL (audio desync fix)
+# RunCam Thumb 2 : correction du son décalé en PAL et de la chute de fps dans le noir (audio desync + low-light FPS fix)
 
 > **EN:** RunCam Thumb 2 (firmware V1.2.2): in **PAL** the audio slowly drifts out of sync with the video (about 1 ms per second, 1.8 s per 30 min), and the frame rate drops in the dark. Cause: the firmware labels PAL video as 50000/**1001** (49.95 fps) while the IMX586 sensor really runs at **50.000 fps**. This repo gives an `autoexec.ash` for the SD card that patches the table in RAM at every boot (no firmware flashing). It works in every PAL resolution, survives menu changes, and keeps the 50 Hz anti-flicker benefit of PAL. It also includes a lossless PC tool for already-recorded clips.
 
