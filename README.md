@@ -53,7 +53,7 @@ Ensuite :
 
 ### ⚠️ Firmware modifié (jamais testé)
 
-Le dossier `firmware-UNTESTED-NON-TESTE/` contient `Thumb2_V1.2.2_patched_UNTESTED.bin`, le firmware officiel V1.2.2 dans lequel les deux corrections de `autoexec.ash` sont écrites directement. S'il fonctionne, il supprime l'attente de 10 s et permet de formater la carte sans perdre la correction.
+Le dossier `firmware-UNTESTED-NON-TESTE/` contient un **patcheur** (`PATCHER.bat`). Tu glisses dessus le `Thumb2.bin` officiel V1.2.2, et il crée une copie dans laquelle les deux corrections de `autoexec.ash` sont écrites directement. Le firmware de RunCam n'est pas fourni dans ce dépôt. S'il fonctionne, il supprime l'attente de 10 s et permet de formater la carte sans perdre la correction.
 
 - **Il n'a jamais été flashé ni testé sur aucune caméra.** Seules les corrections en mémoire vive (`autoexec.ash`) ont été testées.
 - Un contrôle du fichier (le mot à l'adresse `0x20`) n'a pas pu être identifié. La caméra peut donc refuser le fichier ou ne plus démarrer.
@@ -66,7 +66,7 @@ Le dossier `firmware-UNTESTED-NON-TESTE/` contient `Thumb2_V1.2.2_patched_UNTEST
 |---|---|
 | `autoexec.ash` | **La solution complète** : son + noir. |
 | `low-light-only/autoexec.ash` | Seulement la correction du noir, en une seule ligne : valable dans toutes les résolutions, en PAL comme en NTSC, sans relance ni délai de 10 s. À copier aussi à la racine de la carte, à la place de l'autre. |
-| `firmware-UNTESTED-NON-TESTE/` | ⚠️ **Firmware modifié JAMAIS TESTÉ**, construit à partir des corrections de `autoexec.ash`. Le flasher est **à tes risques et sous ta responsabilité** : si la caméra ne fonctionne plus, c'est de ta faute. Lis son README avant tout. |
+| `firmware-UNTESTED-NON-TESTE/` | ⚠️ **Patcheur de firmware JAMAIS TESTÉ** : il applique au `Thumb2.bin` officiel les corrections de `autoexec.ash`. Le flasher est **à tes risques et sous ta responsabilité** : si la caméra ne fonctionne plus, c'est de ta faute. Lis son README avant tout. |
 | `pc/corriger_session.bat` | Pour les **vidéos déjà filmées** : glisse le dossier `DCIM\100MEDIA` dessus. Il recolle les rushs coupés à 4 Go et remet l'image à 50 i/s, sans réencodage. Nécessite ffmpeg. |
 | `pc/corriger_son.bat` | Décale le son d'une valeur fixe en ms, sans réencodage. |
 
@@ -135,7 +135,7 @@ Then:
 
 ### ⚠️ Modified firmware (never tested)
 
-The `firmware-UNTESTED-NON-TESTE/` folder contains `Thumb2_V1.2.2_patched_UNTESTED.bin`, the official V1.2.2 firmware with both `autoexec.ash` fixes written directly into it. If it works, it removes the 10 s wait and lets you format the card without losing the fix.
+The `firmware-UNTESTED-NON-TESTE/` folder contains a **patcher** (`PATCHER.bat`). Drag the official V1.2.2 `Thumb2.bin` onto it, and it creates a copy with both `autoexec.ash` fixes written directly into it. RunCam's firmware is not included in this repository. If it works, it removes the 10 s wait and lets you format the card without losing the fix.
 
 - **It has never been flashed or tested on any camera.** Only the RAM fixes (`autoexec.ash`) were tested.
 - One check in the file (the word at offset `0x20`) could not be identified, so the camera may reject the file or stop booting.
@@ -148,7 +148,7 @@ The `firmware-UNTESTED-NON-TESTE/` folder contains `Thumb2_V1.2.2_patched_UNTEST
 |---|---|
 | `autoexec.ash` | **The complete fix**: audio + dark. |
 | `low-light-only/autoexec.ash` | Dark fix only, in a single line: every resolution, PAL or NTSC, no restart and no 10 s delay. Also goes to the root of the card, replacing the other one. |
-| `firmware-UNTESTED-NON-TESTE/` | ⚠️ **Modified firmware, NEVER TESTED**, built from the `autoexec.ash` fixes. Flashing it is **at your own risk and your own responsibility**: if the camera stops working, it is your fault. Read its README first. |
+| `firmware-UNTESTED-NON-TESTE/` | ⚠️ **Firmware patcher, NEVER TESTED**: it applies the `autoexec.ash` fixes to the official `Thumb2.bin`. Flashing it is **at your own risk and your own responsibility**: if the camera stops working, it is your fault. Read its README first. |
 | `pc/corriger_session.bat` | For **clips already recorded**: drag the `DCIM\100MEDIA` folder onto it. It joins the clips split at 4 GB and restores 50 fps, without re-encoding. Needs ffmpeg. |
 | `pc/corriger_son.bat` | Shifts the audio by a fixed number of ms, without re-encoding. |
 

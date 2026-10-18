@@ -26,7 +26,7 @@ Au total, 55 octets changent. Les CRC connus ont été recalculés : celui de la
 
 **Inconnu :** le mot de 4 octets à l'adresse `0x20` (`0x8732DFE6`). Sa fonction n'a pas été trouvée. S'il sert de contrôle, la caméra peut refuser le fichier ou rester bloquée.
 
-Fichier : `Thumb2_V1.2.2_patched_UNTESTED.bin`, SHA-256 `4edf554d607cce33111cd000415dc5f2b3cd3aacd86cfbc6dc0e034d2528d0c8`.
+Le firmware de RunCam n'est pas fourni ici. Le patcheur le fabrique à partir du fichier officiel. Résultat attendu : `Thumb2_V1.2.2_patched_UNTESTED.bin`, SHA-256 `4edf554d607cce33111cd000415dc5f2b3cd3aacd86cfbc6dc0e034d2528d0c8`.
 
 ### Avantages par rapport à `autoexec.ash`, s'il fonctionne
 
@@ -34,9 +34,17 @@ Fichier : `Thumb2_V1.2.2_patched_UNTESTED.bin`, SHA-256 `4edf554d607cce33111cd00
 - Rien à mettre sur la carte : on peut la formater depuis la caméra ou l'appli sans perdre la correction.
 - Le codec n'est plus forcé en H.264.
 
+### Créer le firmware avec le patcheur (Windows)
+
+1. Télécharge le firmware officiel **V1.2.2** sur [runcam.com/download/thumb2](https://runcam.com/download/thumb2) et extrais `Thumb2.bin` de l'archive `.7z`.
+2. Télécharge ce dossier (`PATCHER.bat` et `patcher_firmware.ps1`, ensemble dans le même dossier).
+3. **Glisse `Thumb2.bin` sur `PATCHER.bat`.**
+4. Le patcheur vérifie que c'est bien le fichier officiel V1.2.2, applique les 55 octets de modification, recalcule les CRC, puis vérifie le résultat. Il crée `Thumb2_V1.2.2_patched_UNTESTED.bin` à côté de `Thumb2.bin`, sans toucher à l'original.
+5. Si le fichier n'est pas le bon, ou si le résultat est inattendu, il s'arrête sans rien écrire.
+
 ### Si tu décides quand même de le flasher
 
-Suis la procédure officielle de RunCam. Renomme le fichier en `Thumb2.bin`, copie-le à la racine de la carte SD, puis allume la caméra et ne coupe pas l'alimentation pendant 2 à 3 minutes. Pour revenir en arrière, flashe le `Thumb2.bin` officiel V1.2.2 de la même façon, si la caméra démarre encore.
+Suis la procédure officielle de RunCam. Renomme le fichier créé en `Thumb2.bin`, copie-le à la racine de la carte SD, puis allume la caméra et ne coupe pas l'alimentation pendant 2 à 3 minutes. Pour revenir en arrière, flashe le `Thumb2.bin` officiel V1.2.2 de la même façon, si la caméra démarre encore.
 
 ---
 
@@ -62,7 +70,7 @@ Base: official RunCam `Thumb2.bin` **V1.2.2** (SHA-256 `97c51baf0607181e9722a0c5
 
 **Unknown:** the 4-byte word at offset `0x20` (`0x8732DFE6`). Its purpose was not found. If it is a check, the camera may reject the file or get stuck.
 
-File: `Thumb2_V1.2.2_patched_UNTESTED.bin`, SHA-256 `4edf554d607cce33111cd000415dc5f2b3cd3aacd86cfbc6dc0e034d2528d0c8`.
+RunCam's firmware is not provided here. The patcher builds it from the official file. Expected result: `Thumb2_V1.2.2_patched_UNTESTED.bin`, SHA-256 `4edf554d607cce33111cd000415dc5f2b3cd3aacd86cfbc6dc0e034d2528d0c8`.
 
 ### Advantages over `autoexec.ash`, if it works
 
@@ -70,6 +78,14 @@ File: `Thumb2_V1.2.2_patched_UNTESTED.bin`, SHA-256 `4edf554d607cce33111cd000415
 - Nothing on the card: you can format it from the camera or the app without losing the fix.
 - The codec is no longer forced to H.264.
 
+### Build the firmware with the patcher (Windows)
+
+1. Download the official **V1.2.2** firmware from [runcam.com/download/thumb2](https://runcam.com/download/thumb2) and extract `Thumb2.bin` from the `.7z` archive.
+2. Download this folder (`PATCHER.bat` and `patcher_firmware.ps1`, together in the same folder).
+3. **Drag `Thumb2.bin` onto `PATCHER.bat`.**
+4. The patcher checks that it is the official V1.2.2 file, applies the 55 changed bytes, recomputes the CRCs, then checks the result. It creates `Thumb2_V1.2.2_patched_UNTESTED.bin` next to `Thumb2.bin`, leaving the original untouched.
+5. If the file is wrong or the result is unexpected, it stops without writing anything.
+
 ### If you still decide to flash it
 
-Follow RunCam's official procedure. Rename the file to `Thumb2.bin`, copy it to the root of the SD card, then power on the camera and do not cut power for 2 to 3 minutes. To go back, flash the official V1.2.2 `Thumb2.bin` the same way, if the camera still boots.
+Follow RunCam's official procedure. Rename the created file to `Thumb2.bin`, copy it to the root of the SD card, then power on the camera and do not cut power for 2 to 3 minutes. To go back, flash the official V1.2.2 `Thumb2.bin` the same way, if the camera still boots.
