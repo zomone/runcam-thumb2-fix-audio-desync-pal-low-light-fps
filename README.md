@@ -57,6 +57,7 @@ Ensuite :
 |---|---|
 | `autoexec.ash` | **La solution complète** : son + noir. |
 | `low-light-only/autoexec.ash` | Seulement la correction du noir, en une seule ligne : valable dans toutes les résolutions, en PAL comme en NTSC, sans relance ni délai de 10 s. À copier aussi à la racine de la carte, à la place de l'autre. |
+| `firmware-UNTESTED-NON-TESTE/` | ⚠️ **Firmware modifié JAMAIS TESTÉ**, construit à partir des corrections de `autoexec.ash`. Le flasher est **à tes risques et sous ta responsabilité** : si la caméra ne fonctionne plus, c'est de ta faute. Lis son README avant tout. |
 | `pc/corriger_session.bat` | Pour les **vidéos déjà filmées** : glisse le dossier `DCIM\100MEDIA` dessus. Il recolle les rushs coupés à 4 Go et remet l'image à 50 i/s, sans réencodage. Nécessite ffmpeg. |
 | `pc/corriger_son.bat` | Décale le son d'une valeur fixe en ms, sans réencodage. |
 
@@ -119,6 +120,7 @@ Then:
 |---|---|
 | `autoexec.ash` | **The complete fix**: audio + dark. |
 | `low-light-only/autoexec.ash` | Dark fix only, in a single line: every resolution, PAL or NTSC, no restart and no 10 s delay. Also goes to the root of the card, replacing the other one. |
+| `firmware-UNTESTED-NON-TESTE/` | ⚠️ **Modified firmware, NEVER TESTED**, built from the `autoexec.ash` fixes. Flashing it is **at your own risk and your own responsibility**: if the camera stops working, it is your fault. Read its README first. |
 | `pc/corriger_session.bat` | For **clips already recorded**: drag the `DCIM\100MEDIA` folder onto it. It joins the clips split at 4 GB and restores 50 fps, without re-encoding. Needs ffmpeg. |
 | `pc/corriger_son.bat` | Shifts the audio by a fixed number of ms, without re-encoding. |
 
