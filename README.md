@@ -9,7 +9,7 @@ Mots-clés : RunCam Thumb 2, désynchronisation audio, son décalé, son en reta
 ## Les symptômes
 
 1. **Le son se décale petit à petit** de l'image, en PAL. Au début du rush tout est calé, puis l'écart grandit d'environ **1 ms par seconde** : 0,27 s au bout de 4 min 30, 1,8 s au bout de 30 min. Quand les rushs coupés à 4 Go sont recollés, l'écart continue de s'accumuler.
-2. **Les images par seconde chutent dans le noir.** La caméra allonge le temps de pose (slow shutter), et la vidéo devient saccadée.
+2. **Les images par seconde chutent dans le noir.** La caméra allonge le temps de pose (slow shutter), et la vidéo devient saccadée. Voir la section « Le problème dans les zones sombres ».
 3. **Passer en NTSC règle le son, mais l'image scintille** sous les lumières à 50 Hz (en France ou en Europe, par exemple). Il faut donc rester en PAL.
 
 ## La cause (trouvée dans le firmware V1.2.2)
@@ -18,6 +18,14 @@ Mots-clés : RunCam Thumb 2, désynchronisation audio, son décalé, son en reta
 - Le firmware a une table des modes vidéo PAL. Dans **22 de ses lignes**, la cadence est notée **50000/1001**, soit 49,95 images/s, au lieu de 50000/1000. C'est le cas notamment du 2.7K (2688×1512) 50 i/s.
 - Le fichier MP4 annonce donc 49,95 i/s, alors que les images arrivent à 50 i/s. L'image dure 0,1 % de trop par rapport au son, d'où l'écart d'environ 1 ms par seconde.
 - En NTSC, le capteur tourne bien à 59,94 i/s, ce qui correspond à l'étiquette 60000/1001. C'est pour ça que le NTSC n'a pas de décalage.
+
+## Le problème dans les zones sombres
+
+- **Symptôme :** dès que la scène devient sombre (intérieur, soirée, ombre), la vidéo devient saccadée. Le fichier reste à 50 i/s, mais beaucoup d'images sont des doublons.
+- **Cause :** l'exposition automatique active le **slow shutter**. Pour capter plus de lumière, elle allonge le temps de pose au-delà de la durée d'une image (par exemple 1/25 s au lieu de 1/50 s). Le capteur ne peut plus fournir 50 images différentes par seconde, et la caméra répète des images.
+- **Correction :** la commande `t imgproc -slowshutter 0 0` désactive ce mode. Le script la renvoie **toutes les 2 secondes**, parce que la caméra le réactive d'elle-même, par exemple après un changement de mode ou de résolution.
+- **Contrepartie :** dans le noir, l'image est un peu plus sombre et un peu plus bruitée, car la caméra compense avec le gain ISO au lieu du temps de pose. En échange, elle reste fluide.
+- Cette correction ne dépend pas de la résolution et n'en force aucune. Elle marche dans toutes les résolutions, en PAL comme en NTSC, même si tu changes de réglage sans redémarrer. Elle est incluse dans `camera/autoexec.ash`. Elle existe aussi seule dans `camera/variantes/autoexec_noir_seul.ash`, pour ceux qui ne veulent que ça, par exemple en NTSC.
 
 ## La solution : `camera/autoexec.ash`
 
@@ -52,7 +60,7 @@ Résultat vérifié : le fichier sort en **50/1**, la durée de l'image et celle
 | `camera/autoexec.ash` | **La solution complète** : correction PAL dans toutes les résolutions, résolution de la dernière fois conservée, pas de chute de fps dans le noir. |
 | `camera/variantes/autoexec_force_2k7.ash` | Même correction, mais la caméra démarre toujours en 2.7K50 (`t app test chg_res 70`, où 70 est le numéro de ligne dans la table PAL). Version de secours. |
 | `camera/variantes/autoexec_capteur_2k7.ash` | Autre méthode : elle ralentit le capteur à 49,95 i/s pile pour coller à l'étiquette (`t sensor write 0 1 0x343 0x1a`, longueur de ligne 10000 → 10010). **Valable seulement en 2.7K50 PAL.** |
-| `camera/variantes/autoexec_noir_seul.ash` | Seulement l'anti-chute de fps dans le noir, sans correction du son. |
+| `camera/variantes/autoexec_noir_seul.ash` | Seulement l'anti-chute de fps dans le noir, sans correction du son. Marche dans toutes les résolutions, en PAL comme en NTSC, sans en forcer aucune. Les 10 premières secondes sont sans risque avec ce script. |
 | `pc/corriger_session.bat` + `.ps1` | Pour les **rushs déjà filmés** : glisse le dossier `DCIM\100MEDIA` sur le `.bat`. Il regroupe les rushs coupés à 4 Go en séances (tu peux choisir lesquels), les recolle et remet l'image à 50 i/s (`ffmpeg -itsscale 0.999000999`), **sans réencodage ni perte de qualité**. Nécessite ffmpeg. |
 | `pc/corriger_son.bat` | Décale le son d'une valeur fixe en millisecondes (trouvée par exemple dans VLC), sans réencodage. |
 
